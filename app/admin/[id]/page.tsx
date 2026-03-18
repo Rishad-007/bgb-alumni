@@ -2,7 +2,10 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { AdminAccessForm } from "@/app/admin/AdminAccessForm";
 import { ADMIN_AUTH_COOKIE, isAdminCookieValid } from "@/lib/adminAuth";
-import { supabase } from "@/lib/supabaseClient";
+import {
+  getSupabaseAdmin,
+  isSupabaseAdminConfigured,
+} from "@/lib/supabaseAdmin";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +46,40 @@ export default async function AlumniDetailPage({
     );
   }
 
-  const { data, error } = await supabase
+  if (!isSupabaseAdminConfigured()) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
+        <div className="w-full max-w-xl rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+          <h1 className="text-xl font-bold text-slate-900">
+            Admin Setup Needed
+          </h1>
+          <p className="mt-2 text-sm text-slate-700">
+            Missing server env vars. Add NEXT_PUBLIC_SUPABASE_URL and
+            SUPABASE_SERVICE_ROLE_KEY in .env.local, then restart dev server.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
+        <div className="w-full max-w-xl rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+          <h1 className="text-xl font-bold text-slate-900">
+            Admin Setup Needed
+          </h1>
+          <p className="mt-2 text-sm text-slate-700">
+            Supabase admin client could not be initialized. Check server env
+            vars and restart the app.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  const { data, error } = await supabaseAdmin
     .from("alumni")
     .select(
       "id, name, email, phone, session, current_university, photo_url, created_at",
@@ -51,7 +87,21 @@ export default async function AlumniDetailPage({
     .eq("id", id)
     .maybeSingle();
 
-  const alumni = data as AlumniDetails | null;
+  let alumni = data as AlumniDetails | null;
+
+  if (
+    alumni?.photo_url &&
+    !alumni.photo_url.startsWith("http://") &&
+    !alumni.photo_url.startsWith("https://")
+  ) {
+    const { data: signedData } = await supabaseAdmin.storage
+      .from("alumni-photos")
+      .createSignedUrl(alumni.photo_url, 60 * 60);
+
+    if (signedData?.signedUrl) {
+      alumni = { ...alumni, photo_url: signedData.signedUrl };
+    }
+  }
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">

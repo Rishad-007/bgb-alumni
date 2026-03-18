@@ -4,7 +4,10 @@ import { AdminAccessForm } from "@/app/admin/AdminAccessForm";
 import { AlumniTable } from "@/app/admin/AlumniTable";
 import { AdminLogoutButton } from "@/app/admin/AdminLogoutButton";
 import { ADMIN_AUTH_COOKIE, isAdminCookieValid } from "@/lib/adminAuth";
-import { supabase } from "@/lib/supabaseClient";
+import {
+  getSupabaseAdmin,
+  isSupabaseAdminConfigured,
+} from "@/lib/supabaseAdmin";
 
 type AlumniRow = {
   id: number | string;
@@ -105,6 +108,39 @@ export default async function AdminPage({
     );
   }
 
+  if (!isSupabaseAdminConfigured()) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
+        <div className="w-full max-w-xl rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+          <h1 className="text-xl font-bold text-slate-900">
+            Admin Setup Needed
+          </h1>
+          <p className="mt-2 text-sm text-slate-700">
+            Missing server env vars. Add NEXT_PUBLIC_SUPABASE_URL and
+            SUPABASE_SERVICE_ROLE_KEY in .env.local, then restart dev server.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
+        <div className="w-full max-w-xl rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+          <h1 className="text-xl font-bold text-slate-900">
+            Admin Setup Needed
+          </h1>
+          <p className="mt-2 text-sm text-slate-700">
+            Supabase admin client could not be initialized. Check server env
+            vars and restart the app.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   const qRaw = params.q;
   const sortRaw = params.sort;
   const orderRaw = params.order;
@@ -125,10 +161,10 @@ export default async function AdminPage({
 
   const [totalCountResponse, sessionAndDateResponse, paginatedResponse] =
     await Promise.all([
-      supabase.from("alumni").select("id", { count: "exact", head: true }),
-      supabase.from("alumni").select("session, created_at"),
+      supabaseAdmin.from("alumni").select("id", { count: "exact", head: true }),
+      supabaseAdmin.from("alumni").select("session, created_at"),
       (async () => {
-        let supabaseQuery = supabase
+        let supabaseQuery = supabaseAdmin
           .from("alumni")
           .select("id, name, email, phone, session, photo_url, created_at", {
             count: "exact",
@@ -206,7 +242,28 @@ export default async function AdminPage({
   const totalRows = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
-  const alumni = (data ?? []) as AlumniRow[];
+  const alumniRaw = (data ?? []) as AlumniRow[];
+  const alumni = await Promise.all(
+    alumniRaw.map(async (row) => {
+      if (!row.photo_url) return row;
+      if (
+        row.photo_url.startsWith("http://") ||
+        row.photo_url.startsWith("https://")
+      ) {
+        return row;
+      }
+
+      const { data: signedData } = await supabaseAdmin.storage
+        .from("alumni-photos")
+        .createSignedUrl(row.photo_url, 60 * 60);
+
+      if (signedData?.signedUrl) {
+        return { ...row, photo_url: signedData.signedUrl };
+      }
+
+      return row;
+    }),
+  );
   const isEmpty = alumni.length === 0;
 
   const prevPage = Math.max(1, safePage - 1);
