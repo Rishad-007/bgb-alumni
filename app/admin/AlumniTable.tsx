@@ -19,6 +19,20 @@ type AlumniTableProps = {
   hasError: boolean;
 };
 
+const createdAtFormatter = new Intl.DateTimeFormat("en-GB", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+const formatCreatedAt = (value: string | null) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return createdAtFormatter.format(date);
+};
+
 export function AlumniTable({ alumni, isEmpty, hasError }: AlumniTableProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -134,9 +148,7 @@ export function AlumniTable({ alumni, isEmpty, hasError }: AlumniTableProps) {
                 {row.session || "-"}
               </td>
               <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-700">
-                {row.created_at
-                  ? new Date(row.created_at).toLocaleDateString()
-                  : "-"}
+                {formatCreatedAt(row.created_at)}
               </td>
               <td className="px-4 py-3 text-sm text-slate-700">
                 {row.photo_url ? (

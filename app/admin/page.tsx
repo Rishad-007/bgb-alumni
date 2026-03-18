@@ -69,7 +69,9 @@ const buildQueryString = (params: {
   if (params.q) searchParams.set("q", params.q);
   searchParams.set("sort", params.sort);
   searchParams.set("order", params.order);
-  searchParams.set("page", String(params.page));
+  if (params.page > 0) {
+    searchParams.set("page", String(params.page));
+  }
   return searchParams.toString();
 };
 
@@ -268,6 +270,12 @@ export default async function AdminPage({
 
   const prevPage = Math.max(1, safePage - 1);
   const nextPage = Math.min(totalPages, safePage + 1);
+  const exportQuery = buildQueryString({
+    q: query,
+    sort,
+    order,
+    page: 0,
+  });
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
@@ -314,6 +322,12 @@ export default async function AdminPage({
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
               </select>
+              <a
+                href={`/api/admin-export?${exportQuery}`}
+                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+              >
+                Download CSV
+              </a>
               <button
                 type="submit"
                 className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
