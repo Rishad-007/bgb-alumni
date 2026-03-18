@@ -16,7 +16,9 @@ type FormErrors = Partial<Record<keyof FormValues | "photo", string>>;
 const MAX_PHOTO_SIZE_BYTES = 100 * 1024;
 const MAX_PHOTO_DIMENSION = 400;
 
-const getImageDimensions = (file: File): Promise<{ width: number; height: number }> =>
+const getImageDimensions = (
+  file: File,
+): Promise<{ width: number; height: number }> =>
   new Promise((resolve, reject) => {
     const imageUrl = URL.createObjectURL(file);
     const image = new Image();
@@ -79,7 +81,8 @@ export default function RegisterPage() {
           nextErrors.photo = "Photo must be within 400x400 pixels.";
         }
       } catch {
-        nextErrors.photo = "Unable to validate photo. Please choose another image.";
+        nextErrors.photo =
+          "Unable to validate photo. Please choose another image.";
       }
     }
 
@@ -281,7 +284,10 @@ export default function RegisterPage() {
                   const file = event.target.files?.[0] ?? null;
                   if (!file) {
                     setPhotoFile(null);
-                    setErrors((prev) => ({ ...prev, photo: "Photo is required." }));
+                    setErrors((prev) => ({
+                      ...prev,
+                      photo: "Photo is required.",
+                    }));
                     return;
                   }
 
@@ -307,7 +313,10 @@ export default function RegisterPage() {
 
                   try {
                     const { width, height } = await getImageDimensions(file);
-                    if (width > MAX_PHOTO_DIMENSION || height > MAX_PHOTO_DIMENSION) {
+                    if (
+                      width > MAX_PHOTO_DIMENSION ||
+                      height > MAX_PHOTO_DIMENSION
+                    ) {
                       setPhotoFile(null);
                       setErrors((prev) => ({
                         ...prev,
@@ -320,7 +329,8 @@ export default function RegisterPage() {
                     setPhotoFile(null);
                     setErrors((prev) => ({
                       ...prev,
-                      photo: "Unable to validate photo. Please choose another image.",
+                      photo:
+                        "Unable to validate photo. Please choose another image.",
                     }));
                     event.currentTarget.value = "";
                     return;
