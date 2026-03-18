@@ -1,9 +1,8 @@
 import Link from "next/link";
 
 const footerLinks = [
-  { href: "#stats", label: "Stats" },
-  { href: "#alumni", label: "Alumni" },
   { href: "#community", label: "Community" },
+  { href: "#contact", label: "Contact" },
 ];
 
 export function LandingFooter() {

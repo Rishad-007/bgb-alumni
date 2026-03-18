@@ -1,44 +1,47 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { DeveloperFooter } from "./DeveloperFooter";
 import { HeroSection } from "./HeroSection";
-import { LandingNavbar } from "./LandingNavbar";
-import { StatsSection } from "./StatsSection";
+import { Navbar } from "./Navbar";
 import { useLandingData } from "./useLandingData";
 
-const AlumniPreviewSection = dynamic(
-  () =>
-    import("./AlumniPreviewSection").then((mod) => mod.AlumniPreviewSection),
+const LegacySection = dynamic(
+  () => import("./LegacySection").then((mod) => mod.LegacySection),
   { ssr: false },
 );
 
-const CommunitySection = dynamic(
-  () => import("./CommunitySection").then((mod) => mod.CommunitySection),
+const WhyJoinSection = dynamic(
+  () => import("./WhyJoinSection").then((mod) => mod.WhyJoinSection),
   { ssr: false },
 );
 
-const CtaSection = dynamic(
-  () => import("./CtaSection").then((mod) => mod.CtaSection),
+const Stats = dynamic(() => import("./Stats").then((mod) => mod.Stats), {
+  ssr: false,
+});
+
+const TestimonialsSection = dynamic(
+  () => import("./TestimonialsSection").then((mod) => mod.TestimonialsSection),
   { ssr: false },
 );
 
-const LandingFooter = dynamic(
-  () => import("./LandingFooter").then((mod) => mod.LandingFooter),
-  { ssr: false },
-);
+const CTA = dynamic(() => import("./CTA").then((mod) => mod.CTA), {
+  ssr: false,
+});
 
 export function LandingPage() {
-  const { stats, latestAlumni, isLoading, hasError } = useLandingData();
+  const { stats, hasError } = useLandingData();
 
   return (
     <main className="bg-white text-slate-900">
-      <LandingNavbar />
+      <Navbar />
       <HeroSection />
-      <StatsSection stats={stats} hasError={hasError} />
-      <AlumniPreviewSection latestAlumni={latestAlumni} isLoading={isLoading} />
-      <CommunitySection />
-      <CtaSection />
-      <LandingFooter />
+      <LegacySection totalAlumni={stats.totalAlumni} />
+      <WhyJoinSection />
+      <Stats stats={stats} hasError={hasError} />
+      <TestimonialsSection />
+      <CTA />
+      <DeveloperFooter />
     </main>
   );
 }

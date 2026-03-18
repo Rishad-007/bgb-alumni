@@ -2,10 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --brand-navy: #0a2342;
+  --brand-gold: #f2c14e;
+  --brand-ink: #0f172a;
+  --brand-mist: #f8fafc;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
   @apply bg-white text-gray-900;
+  font-family: var(--font-body), "Segoe UI", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display), Georgia, serif;
 }

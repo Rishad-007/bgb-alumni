@@ -56,10 +56,11 @@ export function AlumniPreviewSection({
               >
                 <div className="relative h-44 overflow-hidden">
                   <Image
-                    src="/images/scl.jpg"
-                    alt="Alumni profile placeholder"
+                    src={alumni.photo_url || "/images/scl.jpg"}
+                    alt={`${alumni.name?.trim() || "Alumni"} profile`}
                     fill
                     loading="lazy"
+                    unoptimized={Boolean(alumni.photo_url)}
                     className="object-cover transition duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent opacity-70 transition-opacity duration-300 group-hover:opacity-90" />

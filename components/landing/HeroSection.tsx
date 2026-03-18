@@ -1,19 +1,34 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useScroll, useTransform } from "framer-motion";
+import { NoticeBoard } from "./NoticeBoard.tsx";
 
 export function HeroSection() {
   const { scrollY } = useScroll();
-  const backgroundY = useTransform(scrollY, [0, 700], [0, 120]);
+  const backgroundScale = useTransform(scrollY, [0, 600], [1, 1.1]);
+  const backgroundY = useTransform(scrollY, [0, 600], [0, -40]);
+
+  const headlineWords = [
+    "Border",
+    "Guard",
+    "Public",
+    "School",
+    "and",
+    "College",
+  ];
 
   return (
     <section
       id="top"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden"
+      className="relative isolate flex min-h-screen items-center overflow-hidden bg-[#020b1a]"
     >
-      <motion.div className="absolute inset-0" style={{ y: backgroundY }}>
+      <motion.div
+        className="absolute inset-0"
+        style={{ scale: backgroundScale, y: backgroundY }}
+      >
         <Image
           src="/images/heroPageImage.jpg"
           alt="Border Guard Public School and College campus"
@@ -23,88 +38,147 @@ export function HeroSection() {
         />
       </motion.div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-blue-950/80 to-slate-950/90" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(34,211,238,0.18),rgba(2,6,23,0.1)_35%,rgba(2,6,23,0.65)_85%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/45 via-slate-950/70 to-[#030a17]/95" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(8,145,178,0.26),rgba(2,8,23,0)_45%),radial-gradient(circle_at_85%_78%,rgba(37,99,235,0.24),rgba(2,6,23,0)_42%)]" />
 
       <motion.div
-        className="pointer-events-none absolute -left-24 top-24 h-56 w-56 rounded-full bg-cyan-300/25 blur-3xl"
-        animate={{ y: [0, -18, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="pointer-events-none absolute -right-24 bottom-20 h-72 w-72 rounded-full bg-blue-400/20 blur-3xl"
-        animate={{ y: [0, 22, 0] }}
+        className="pointer-events-none absolute -left-20 top-28 h-64 w-64 rounded-full border border-cyan-300/15 bg-cyan-400/10 blur-3xl"
+        animate={{ y: [0, -16, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
+      <motion.div
+        className="pointer-events-none absolute -right-16 bottom-20 h-72 w-72 rounded-full border border-blue-300/15 bg-blue-300/10 blur-3xl"
+        animate={{ y: [0, 16, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+      />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-4 pt-24 text-center sm:px-6 lg:px-8">
-        <motion.div
-          className="mb-6 rounded-3xl border border-white/40 bg-white/15 p-2 shadow-2xl shadow-slate-950/50 backdrop-blur-sm"
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.6 }}
-        >
-          <Image
-            src="/images/School-Logo.jpeg"
-            alt="Border Guard Public School and College logo"
-            width={110}
-            height={110}
-            priority
-            className="h-20 w-20 rounded-2xl object-cover sm:h-24 sm:w-24"
-          />
-        </motion.div>
-
-        <div className="w-full max-w-5xl rounded-3xl border border-white/20 bg-slate-950/40 px-5 py-8 shadow-2xl shadow-slate-950/60 backdrop-blur-md sm:px-8 sm:py-10">
-          <motion.p
-            className="mb-5 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100 sm:text-sm"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            Border Guard Public School and College Alumni
-          </motion.p>
-
-          <motion.h1
-            className="mx-auto max-w-4xl text-4xl font-bold leading-tight text-white drop-shadow-[0_8px_30px_rgba(0,0,0,0.55)] sm:text-5xl md:text-6xl lg:text-7xl"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15 }}
-          >
-            Reconnect. Remember. Rise Together.
-          </motion.h1>
-
-          <motion.p
-            className="mx-auto mt-6 max-w-2xl text-base text-slate-100 sm:text-lg md:text-xl"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.25 }}
-          >
-            One trusted home for stories, friendships, and opportunities that
-            keep the BGPSC spirit alive across generations.
-          </motion.p>
-
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-16 pt-28 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)] lg:items-end">
           <motion.div
-            className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
+            className="max-w-3xl"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.35 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <Link
-              href="/register"
-              className="rounded-full bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-blue-700/40 transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-500"
-            >
-              Join Alumni
-            </Link>
-            <a
-              href="#community"
-              className="rounded-full border border-white/30 bg-white/10 px-8 py-3.5 text-base font-semibold text-white backdrop-blur-sm transition-all duration-300 hover:border-cyan-200 hover:bg-white/15"
-            >
-              View Community
-            </a>
+            <div className="flex flex-col items-start">
+              <motion.div
+                className="relative mb-8 flex w-full justify-center lg:justify-start"
+                initial={{ opacity: 0, scale: 0.85, y: 30 }}
+                animate={{ opacity: 1, scale: 1, y: -8 }}
+                transition={{
+                  duration: 0.8,
+                  delay: 0.2,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+              >
+                <div className="relative h-24 w-24 rounded-full border border-white/45 bg-white/10 p-1.5 backdrop-blur-md">
+                  <motion.div
+                    className="absolute inset-0 rounded-full bg-cyan-300/30 blur-xl"
+                    animate={{
+                      opacity: [0.28, 0.62, 0.28],
+                      scale: [0.96, 1.08, 0.96],
+                    }}
+                    transition={{
+                      duration: 3.2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  <Image
+                    src="/images/School-Logo.jpeg"
+                    alt="Border Guard Public School and College logo"
+                    width={92}
+                    height={92}
+                    priority
+                    className="relative h-full w-full rounded-full object-cover"
+                  />
+                </div>
+              </motion.div>
+
+              <h1 className="text-balance text-4xl font-extrabold leading-[1.02] text-white drop-shadow-[0_16px_28px_rgba(2,8,23,0.55)] sm:text-5xl md:text-6xl lg:text-7xl">
+                {headlineWords.map((word, index) => (
+                  <motion.span
+                    key={word}
+                    className="mr-3 inline-block"
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.55,
+                      delay: 0.35 + index * 0.08,
+                      ease: "easeOut",
+                    }}
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </h1>
+
+              <motion.h2
+                className="mt-4 bg-gradient-to-r from-cyan-300 via-sky-200 to-blue-300 bg-clip-text text-3xl font-extrabold text-transparent sm:text-4xl md:text-5xl"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.95, ease: "easeOut" }}
+              >
+                Alumni Network
+              </motion.h2>
+
+              <motion.p
+                className="mt-6 max-w-2xl text-base leading-relaxed text-slate-200 sm:text-lg md:text-xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.7, delay: 1.15, ease: "easeOut" }}
+              >
+                Reconnect with your roots. Be part of a legacy.
+              </motion.p>
+
+              <motion.div
+                className="mt-10 flex w-full justify-center sm:justify-start"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.3, ease: "easeOut" }}
+              >
+                <motion.div
+                  initial={{ y: 8 }}
+                  animate={{ y: [8, 0, -3, 0] }}
+                  transition={{ duration: 0.9, delay: 1.35, ease: "easeOut" }}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <Link
+                    href="/register"
+                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-8 py-3.5 text-base font-bold text-slate-950 shadow-[0_0_30px_rgba(14,165,233,0.42)] transition-shadow duration-300 hover:shadow-[0_0_44px_rgba(56,189,248,0.6)]"
+                  >
+                    Join Alumni
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </div>
           </motion.div>
+
+          <div className="relative pb-8 lg:pb-0">
+            <NoticeBoard />
+          </div>
         </div>
+
+        <motion.a
+          href="#legacy"
+          className="absolute bottom-8 left-1/2 inline-flex -translate-x-1/2 flex-col items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-200/90"
+          animate={{ y: [0, 7, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        >
+          Scroll
+          <span className="inline-flex h-9 w-6 items-start justify-center rounded-full border border-white/45 p-1">
+            <motion.span
+              className="h-2 w-2 rounded-full bg-cyan-300"
+              animate={{ y: [0, 12, 0], opacity: [0.3, 1, 0.3] }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          </span>
+        </motion.a>
       </div>
     </section>
   );
