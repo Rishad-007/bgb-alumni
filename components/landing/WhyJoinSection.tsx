@@ -1,31 +1,39 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { IconType } from "react-icons";
+import { FiAward, FiBriefcase, FiCalendar, FiUsers } from "react-icons/fi";
 
-const items = [
+type WhyJoinItem = {
+  title: string;
+  description: string;
+  icon: IconType;
+};
+
+const items: WhyJoinItem[] = [
   {
     title: "Networking",
     description:
       "Reconnect with friends and grow your circle with alumni across batches and professions.",
-    icon: "🤝",
+    icon: FiUsers,
   },
   {
     title: "Opportunities",
     description:
       "Discover mentorship, career openings, and collaborations within a trusted school community.",
-    icon: "🚀",
+    icon: FiBriefcase,
   },
   {
     title: "Events",
     description:
       "Get first updates on reunions, campus visits, and special alumni gatherings.",
-    icon: "🎉",
+    icon: FiCalendar,
   },
   {
     title: "Recognition",
     description:
       "Celebrate achievements and inspire current students through your journey.",
-    icon: "🏆",
+    icon: FiAward,
   },
 ];
 
@@ -60,7 +68,10 @@ export function WhyJoinSection() {
               whileHover={{ y: -8, scale: 1.01 }}
             >
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-100 to-blue-100 text-2xl">
-                {item.icon}
+                <item.icon
+                  className="h-6 w-6 text-blue-700"
+                  aria-hidden="true"
+                />
               </div>
               <h3 className="mt-5 text-xl font-bold text-slate-900">
                 {item.title}

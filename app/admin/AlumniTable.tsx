@@ -57,13 +57,16 @@ export function AlumniTable({ alumni, isEmpty, hasError }: AlumniTableProps) {
     setActionMessage("");
 
     try {
-      const response = await fetch(`/api/admin/alumni/${encodeURIComponent(id)}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `/api/admin/alumni/${encodeURIComponent(id)}`,
+        {
+          method: "DELETE",
+        },
+      );
 
-      const payload = (await response.json().catch(() => null)) as
-        | { error?: string }
-        | null;
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
 
       if (!response.ok) {
         setActionMessage(payload?.error || "Delete failed.");

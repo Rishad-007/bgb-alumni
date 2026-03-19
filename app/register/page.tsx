@@ -133,7 +133,7 @@ export default function RegisterPage() {
     }
 
     if (!values.phone.trim()) nextErrors.phone = "Phone is required.";
-    if (!values.session.trim()) nextErrors.session = "Session is required.";
+    if (!values.session.trim()) nextErrors.session = "SSC Session is required.";
 
     if (!values.currentUniversity.trim()) {
       nextErrors.currentUniversity = "Current university/job is required.";
@@ -328,7 +328,8 @@ export default function RegisterPage() {
               <motion.div variants={fieldItem}>
                 <FloatingInput
                   id="session"
-                  label="Session"
+                  label="SSC Session"
+                  placeholder="Write your last class"
                   value={values.session}
                   onChange={handleChange("session")}
                   required

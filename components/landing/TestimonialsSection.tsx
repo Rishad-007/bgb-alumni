@@ -6,14 +6,14 @@ const quotes = [
   {
     quote:
       "This alumni network brought me back to the people who shaped my earliest dreams. It feels like coming home.",
-    author: "Nafisa Rahman",
-    session: "Batch 2014",
+    author: "MD. Rishad Nur",
+    session: "SSC Batch 2017",
   },
   {
     quote:
       "Through the alumni community, I found mentors, collaborators, and lifelong friends all over again.",
-    author: "Samiul Haque",
-    session: "Batch 2010",
+    author: "Azizul Haq Akash",
+    session: "SSC Batch 2017",
   },
 ];
 

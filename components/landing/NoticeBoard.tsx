@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 
 const latestNotice = {
-  title: "Alumni Homecoming 2026",
+  title: "Alumni Registrations Open!",
   body: "Grand reunion registrations are now open. Confirm your participation and reconnect with your batchmates.",
   date: "Updated 2 hours ago",
 };

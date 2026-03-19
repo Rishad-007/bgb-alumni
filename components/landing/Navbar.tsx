@@ -91,12 +91,12 @@ export function Navbar() {
                 : "border-white/40 bg-white/10 text-white"
             }`}
           >
-            BGPSC
+            BGPSCLA
           </span>
           <span
             className={`hidden text-sm font-semibold sm:inline ${textClass}`}
           >
-            Border Guard Public School and College Alumni
+            Border Guard Public School and College Lalmonirhat Alumni
           </span>
         </a>
 
