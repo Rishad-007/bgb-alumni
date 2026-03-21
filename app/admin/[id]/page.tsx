@@ -15,6 +15,15 @@ type AlumniDetails = {
   email: string | null;
   phone: string | null;
   session: string | null;
+  start_class: string | null;
+  start_year: number | null;
+  end_class: string | null;
+  end_year: number | null;
+  has_public_exam: boolean | null;
+  psc_year: number | null;
+  jsc_year: number | null;
+  ssc_year: number | null;
+  hsc_year: number | null;
   current_university: string | null;
   photo_url: string | null;
   created_at: string | null;
@@ -82,7 +91,7 @@ export default async function AlumniDetailPage({
   const { data, error } = await supabaseAdmin
     .from("alumni")
     .select(
-      "id, name, email, phone, session, current_university, photo_url, created_at",
+      "id, name, email, phone, session, start_class, start_year, end_class, end_year, has_public_exam, psc_year, jsc_year, ssc_year, hsc_year, current_university, photo_url, created_at",
     )
     .eq("id", id)
     .maybeSingle();
@@ -102,6 +111,13 @@ export default async function AlumniDetailPage({
       alumni = { ...alumni, photo_url: signedData.signedUrl };
     }
   }
+
+  const examEntries = [
+    { label: "PSC", year: alumni?.psc_year },
+    { label: "JSC", year: alumni?.jsc_year },
+    { label: "SSC", year: alumni?.ssc_year },
+    { label: "HSC", year: alumni?.hsc_year },
+  ].filter((item) => item.year !== null);
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6">
@@ -179,11 +195,67 @@ export default async function AlumniDetailPage({
                   </div>
                   <div className="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200">
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      Session
+                      Legacy Session
                     </p>
                     <p className="mt-1 text-sm text-slate-900">
                       {alumni.session || "-"}
                     </p>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Start Class
+                    </p>
+                    <p className="mt-1 text-sm text-slate-900">
+                      {alumni.start_class || "-"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Start Year
+                    </p>
+                    <p className="mt-1 text-sm text-slate-900">
+                      {alumni.start_year ?? "-"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      End Class
+                    </p>
+                    <p className="mt-1 text-sm text-slate-900">
+                      {alumni.end_class || "-"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      End Year
+                    </p>
+                    <p className="mt-1 text-sm text-slate-900">
+                      {alumni.end_year ?? "-"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200 sm:col-span-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Public Exam From School
+                    </p>
+                    <p className="mt-1 text-sm text-slate-900">
+                      {alumni.has_public_exam ? "Yes" : "No"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200 sm:col-span-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Public Exam Years
+                    </p>
+                    {examEntries.length > 0 ? (
+                      <ul className="mt-1 space-y-1 text-sm text-slate-900">
+                        {examEntries.map((item) => (
+                          <li key={item.label}>
+                            {item.label}: {item.year}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-1 text-sm text-slate-900">-</p>
+                    )}
                   </div>
                   <div className="rounded-lg bg-slate-50 p-4 ring-1 ring-slate-200 sm:col-span-2">
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">

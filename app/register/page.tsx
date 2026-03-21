@@ -12,11 +12,25 @@ type FormValues = {
   name: string;
   email: string;
   phone: string;
-  session: string;
+  startClass: string;
+  startYear: string;
+  endClass: string;
+  endYear: string;
+  publicExamFromSchool: "" | "yes" | "no";
+  pscTaken: boolean;
+  pscYear: string;
+  jscTaken: boolean;
+  jscYear: string;
+  sscTaken: boolean;
+  sscYear: string;
+  hscTaken: boolean;
+  hscYear: string;
   currentUniversity: string;
 };
 
-type FormErrors = Partial<Record<keyof FormValues | "photo", string>>;
+type FormErrors = Partial<
+  Record<keyof FormValues | "photo" | "publicExams", string>
+>;
 
 const MAX_PHOTO_SIZE_BYTES = 100 * 1024;
 const MAX_PHOTO_DIMENSION = 400;
@@ -63,7 +77,19 @@ export default function RegisterPage() {
     name: "",
     email: "",
     phone: "",
-    session: "",
+    startClass: "",
+    startYear: "",
+    endClass: "",
+    endYear: "",
+    publicExamFromSchool: "",
+    pscTaken: false,
+    pscYear: "",
+    jscTaken: false,
+    jscYear: "",
+    sscTaken: false,
+    sscYear: "",
+    hscTaken: false,
+    hscYear: "",
     currentUniversity: "",
   });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -78,6 +104,7 @@ export default function RegisterPage() {
   const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const emailPattern = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/, []);
+  const yearPattern = useMemo(() => /^\d{4}$/, []);
 
   const stopProgressTimer = () => {
     if (progressTimerRef.current) {
@@ -133,7 +160,68 @@ export default function RegisterPage() {
     }
 
     if (!values.phone.trim()) nextErrors.phone = "Phone is required.";
-    if (!values.session.trim()) nextErrors.session = "SSC Session is required.";
+    if (!values.startClass.trim())
+      nextErrors.startClass = "Start class is required.";
+    if (!values.startYear.trim()) {
+      nextErrors.startYear = "Start year is required.";
+    } else if (!yearPattern.test(values.startYear.trim())) {
+      nextErrors.startYear = "Start year must be 4 digits (e.g. 2015).";
+    }
+
+    if (!values.endClass.trim()) nextErrors.endClass = "End class is required.";
+    if (!values.endYear.trim()) {
+      nextErrors.endYear = "End year is required.";
+    } else if (!yearPattern.test(values.endYear.trim())) {
+      nextErrors.endYear = "End year must be 4 digits (e.g. 2020).";
+    }
+
+    if (!values.publicExamFromSchool) {
+      nextErrors.publicExamFromSchool = "Please choose yes or no.";
+    }
+
+    if (values.publicExamFromSchool === "yes") {
+      const hasAnyExam =
+        values.pscTaken ||
+        values.jscTaken ||
+        values.sscTaken ||
+        values.hscTaken;
+
+      if (!hasAnyExam) {
+        nextErrors.publicExams = "Select at least one public exam.";
+      }
+
+      if (values.pscTaken) {
+        if (!values.pscYear.trim()) {
+          nextErrors.pscYear = "PSC year is required.";
+        } else if (!yearPattern.test(values.pscYear.trim())) {
+          nextErrors.pscYear = "PSC year must be 4 digits.";
+        }
+      }
+
+      if (values.jscTaken) {
+        if (!values.jscYear.trim()) {
+          nextErrors.jscYear = "JSC year is required.";
+        } else if (!yearPattern.test(values.jscYear.trim())) {
+          nextErrors.jscYear = "JSC year must be 4 digits.";
+        }
+      }
+
+      if (values.sscTaken) {
+        if (!values.sscYear.trim()) {
+          nextErrors.sscYear = "SSC year is required.";
+        } else if (!yearPattern.test(values.sscYear.trim())) {
+          nextErrors.sscYear = "SSC year must be 4 digits.";
+        }
+      }
+
+      if (values.hscTaken) {
+        if (!values.hscYear.trim()) {
+          nextErrors.hscYear = "HSC year is required.";
+        } else if (!yearPattern.test(values.hscYear.trim())) {
+          nextErrors.hscYear = "HSC year must be 4 digits.";
+        }
+      }
+    }
 
     if (!values.currentUniversity.trim()) {
       nextErrors.currentUniversity = "Current university/job is required.";
@@ -199,7 +287,28 @@ export default function RegisterPage() {
           name: values.name.trim(),
           email: values.email.trim().toLowerCase(),
           phone: values.phone.trim(),
-          session: values.session.trim(),
+          session: `${values.startClass.trim()} (${values.startYear.trim()}) - ${values.endClass.trim()} (${values.endYear.trim()})`,
+          start_class: values.startClass.trim(),
+          start_year: Number.parseInt(values.startYear.trim(), 10),
+          end_class: values.endClass.trim(),
+          end_year: Number.parseInt(values.endYear.trim(), 10),
+          has_public_exam: values.publicExamFromSchool === "yes",
+          psc_year:
+            values.publicExamFromSchool === "yes" && values.pscTaken
+              ? Number.parseInt(values.pscYear.trim(), 10)
+              : null,
+          jsc_year:
+            values.publicExamFromSchool === "yes" && values.jscTaken
+              ? Number.parseInt(values.jscYear.trim(), 10)
+              : null,
+          ssc_year:
+            values.publicExamFromSchool === "yes" && values.sscTaken
+              ? Number.parseInt(values.sscYear.trim(), 10)
+              : null,
+          hsc_year:
+            values.publicExamFromSchool === "yes" && values.hscTaken
+              ? Number.parseInt(values.hscYear.trim(), 10)
+              : null,
           current_university: values.currentUniversity.trim(),
           photo_url: uploadData.path,
         },
@@ -223,7 +332,19 @@ export default function RegisterPage() {
         name: "",
         email: "",
         phone: "",
-        session: "",
+        startClass: "",
+        startYear: "",
+        endClass: "",
+        endYear: "",
+        publicExamFromSchool: "",
+        pscTaken: false,
+        pscYear: "",
+        jscTaken: false,
+        jscYear: "",
+        sscTaken: false,
+        sscYear: "",
+        hscTaken: false,
+        hscYear: "",
         currentUniversity: "",
       });
       setPhotoFile(null);
@@ -248,6 +369,55 @@ export default function RegisterPage() {
   const handleChange = (field: keyof FormValues) => (nextValue: string) => {
     setValues((previous) => ({ ...previous, [field]: nextValue }));
     setErrors((previous) => ({ ...previous, [field]: undefined }));
+  };
+
+  const handlePublicExamChoice = (choice: "yes" | "no") => {
+    setValues((previous) => ({
+      ...previous,
+      publicExamFromSchool: choice,
+      ...(choice === "no"
+        ? {
+            pscTaken: false,
+            pscYear: "",
+            jscTaken: false,
+            jscYear: "",
+            sscTaken: false,
+            sscYear: "",
+            hscTaken: false,
+            hscYear: "",
+          }
+        : {}),
+    }));
+
+    setErrors((previous) => ({
+      ...previous,
+      publicExamFromSchool: undefined,
+      publicExams: undefined,
+      pscYear: undefined,
+      jscYear: undefined,
+      sscYear: undefined,
+      hscYear: undefined,
+    }));
+  };
+
+  const handleExamToggle = (
+    exam: "psc" | "jsc" | "ssc" | "hsc",
+    checked: boolean,
+  ) => {
+    setValues(
+      (previous) =>
+        ({
+          ...previous,
+          [`${exam}Taken`]: checked,
+          ...(checked ? {} : { [`${exam}Year`]: "" }),
+        }) as FormValues,
+    );
+
+    setErrors((previous) => ({
+      ...previous,
+      publicExams: undefined,
+      [`${exam}Year`]: undefined,
+    }));
   };
 
   return (
@@ -327,16 +497,143 @@ export default function RegisterPage() {
 
               <motion.div variants={fieldItem}>
                 <FloatingInput
-                  id="session"
-                  label="SSC Session"
-                  placeholder="Write your last class"
-                  value={values.session}
-                  onChange={handleChange("session")}
+                  id="startClass"
+                  label="Start Class"
+                  placeholder="e.g. Class 1"
+                  value={values.startClass}
+                  onChange={handleChange("startClass")}
                   required
                   type="text"
                   icon={<SessionIcon />}
-                  error={errors.session}
+                  error={errors.startClass}
                 />
+              </motion.div>
+
+              <motion.div variants={fieldItem}>
+                <FloatingInput
+                  id="startYear"
+                  label="Start Year"
+                  placeholder="e.g. 2012"
+                  value={values.startYear}
+                  onChange={handleChange("startYear")}
+                  required
+                  type="text"
+                  icon={<SessionIcon />}
+                  error={errors.startYear}
+                />
+              </motion.div>
+
+              <motion.div variants={fieldItem}>
+                <FloatingInput
+                  id="endClass"
+                  label="End Class"
+                  placeholder="e.g. SSC / HSC"
+                  value={values.endClass}
+                  onChange={handleChange("endClass")}
+                  required
+                  type="text"
+                  icon={<SessionIcon />}
+                  error={errors.endClass}
+                />
+              </motion.div>
+
+              <motion.div variants={fieldItem}>
+                <FloatingInput
+                  id="endYear"
+                  label="End Year"
+                  placeholder="e.g. 2023"
+                  value={values.endYear}
+                  onChange={handleChange("endYear")}
+                  required
+                  type="text"
+                  icon={<SessionIcon />}
+                  error={errors.endYear}
+                />
+              </motion.div>
+
+              <motion.div
+                variants={fieldItem}
+                className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-700">
+                  Do you have any public exam from this school? *
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handlePublicExamChoice("yes")}
+                    className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition ${
+                      values.publicExamFromSchool === "yes"
+                        ? "border-blue-600 bg-blue-600 text-white"
+                        : "border-slate-300 bg-white text-slate-700 hover:border-blue-400"
+                    }`}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handlePublicExamChoice("no")}
+                    className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition ${
+                      values.publicExamFromSchool === "no"
+                        ? "border-blue-600 bg-blue-600 text-white"
+                        : "border-slate-300 bg-white text-slate-700 hover:border-blue-400"
+                    }`}
+                  >
+                    No
+                  </button>
+                </div>
+
+                {errors.publicExamFromSchool ? (
+                  <p className="text-xs text-rose-600">
+                    {errors.publicExamFromSchool}
+                  </p>
+                ) : null}
+
+                {values.publicExamFromSchool === "yes" ? (
+                  <div className="space-y-3">
+                    {errors.publicExams ? (
+                      <p className="text-xs text-rose-600">
+                        {errors.publicExams}
+                      </p>
+                    ) : null}
+
+                    <div className="space-y-2">
+                      <ExamYearRow
+                        label="PSC"
+                        checked={values.pscTaken}
+                        yearValue={values.pscYear}
+                        onToggle={(checked) => handleExamToggle("psc", checked)}
+                        onYearChange={handleChange("pscYear")}
+                        error={errors.pscYear}
+                      />
+                      <ExamYearRow
+                        label="JSC"
+                        checked={values.jscTaken}
+                        yearValue={values.jscYear}
+                        onToggle={(checked) => handleExamToggle("jsc", checked)}
+                        onYearChange={handleChange("jscYear")}
+                        error={errors.jscYear}
+                      />
+                      <ExamYearRow
+                        label="SSC"
+                        checked={values.sscTaken}
+                        yearValue={values.sscYear}
+                        onToggle={(checked) => handleExamToggle("ssc", checked)}
+                        onYearChange={handleChange("sscYear")}
+                        error={errors.sscYear}
+                      />
+                      <ExamYearRow
+                        label="HSC"
+                        checked={values.hscTaken}
+                        yearValue={values.hscYear}
+                        onToggle={(checked) => handleExamToggle("hsc", checked)}
+                        onYearChange={handleChange("hscYear")}
+                        error={errors.hscYear}
+                      />
+                    </div>
+                  </div>
+                ) : null}
               </motion.div>
 
               <motion.div variants={fieldItem}>
@@ -507,6 +804,51 @@ function SessionIcon() {
       <path d="M4 5h16v14H4z" />
       <path d="M8 3v4M16 3v4M4 11h16" />
     </svg>
+  );
+}
+
+type ExamYearRowProps = {
+  label: string;
+  checked: boolean;
+  yearValue: string;
+  onToggle: (checked: boolean) => void;
+  onYearChange: (value: string) => void;
+  error?: string;
+};
+
+function ExamYearRow({
+  label,
+  checked,
+  yearValue,
+  onToggle,
+  onYearChange,
+  error,
+}: ExamYearRowProps) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-3">
+      <label className="flex items-center gap-2 text-sm font-medium text-slate-800">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(event) => onToggle(event.target.checked)}
+          className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+        />
+        {label}
+      </label>
+
+      {checked ? (
+        <div className="mt-2">
+          <input
+            type="text"
+            value={yearValue}
+            onChange={(event) => onYearChange(event.target.value)}
+            placeholder={`${label} year (e.g. 2018)`}
+            className="h-11 w-full rounded-xl border border-slate-300 px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+          />
+          {error ? <p className="mt-1 text-xs text-rose-600">{error}</p> : null}
+        </div>
+      ) : null}
+    </div>
   );
 }
 

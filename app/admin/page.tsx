@@ -15,6 +15,15 @@ type AlumniRow = {
   email: string | null;
   phone: string | null;
   session: string | null;
+  start_class: string | null;
+  start_year: number | null;
+  end_class: string | null;
+  end_year: number | null;
+  has_public_exam: boolean | null;
+  psc_year: number | null;
+  jsc_year: number | null;
+  ssc_year: number | null;
+  hsc_year: number | null;
   photo_url: string | null;
   created_at: string | null;
 };
@@ -22,9 +31,16 @@ type AlumniRow = {
 type SortField = "name" | "session" | "created_at";
 type SortOrder = "asc" | "desc";
 
-type SessionCount = {
-  session: string;
+type ClassCount = {
+  className: string;
   count: number;
+};
+
+type ExamStats = {
+  psc: number;
+  jsc: number;
+  ssc: number;
+  hsc: number;
 };
 
 type DailyCount = {
@@ -164,13 +180,20 @@ export default async function AdminPage({
   const [totalCountResponse, sessionAndDateResponse, paginatedResponse] =
     await Promise.all([
       supabaseAdmin.from("alumni").select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("alumni").select("session, created_at"),
+      supabaseAdmin
+        .from("alumni")
+        .select(
+          "start_class, end_class, has_public_exam, psc_year, jsc_year, ssc_year, hsc_year, created_at",
+        ),
       (async () => {
         let supabaseQuery = supabaseAdmin
           .from("alumni")
-          .select("id, name, email, phone, session, photo_url, created_at", {
+          .select(
+            "id, name, email, phone, session, start_class, start_year, end_class, end_year, has_public_exam, psc_year, jsc_year, ssc_year, hsc_year, photo_url, created_at",
+            {
             count: "exact",
-          });
+            },
+          );
 
         if (query) {
           const escapedQuery = escapeForIlike(query);
@@ -192,8 +215,16 @@ export default async function AdminPage({
   const statsData = sessionAndDateResponse.data ?? [];
   const statsError = totalCountResponse.error ?? sessionAndDateResponse.error;
 
-  const sessionCountsMap = new Map<string, number>();
+  const startClassCountsMap = new Map<string, number>();
+  const endClassCountsMap = new Map<string, number>();
   const dayCountsMap = new Map<string, number>();
+  const examStats: ExamStats = {
+    psc: 0,
+    jsc: 0,
+    ssc: 0,
+    hsc: 0,
+  };
+  let publicExamCount = 0;
 
   for (let i = 0; i < 7; i += 1) {
     const day = new Date(startDate);
@@ -202,11 +233,26 @@ export default async function AdminPage({
   }
 
   for (const row of statsData) {
-    const sessionName = (row.session ?? "Unknown").trim() || "Unknown";
-    sessionCountsMap.set(
-      sessionName,
-      (sessionCountsMap.get(sessionName) ?? 0) + 1,
+    const startClassName = (row.start_class ?? "Unknown").trim() || "Unknown";
+    const endClassName = (row.end_class ?? "Unknown").trim() || "Unknown";
+
+    startClassCountsMap.set(
+      startClassName,
+      (startClassCountsMap.get(startClassName) ?? 0) + 1,
     );
+    endClassCountsMap.set(
+      endClassName,
+      (endClassCountsMap.get(endClassName) ?? 0) + 1,
+    );
+
+    if (row.has_public_exam) {
+      publicExamCount += 1;
+    }
+
+    if (row.psc_year !== null) examStats.psc += 1;
+    if (row.jsc_year !== null) examStats.jsc += 1;
+    if (row.ssc_year !== null) examStats.ssc += 1;
+    if (row.hsc_year !== null) examStats.hsc += 1;
 
     if (row.created_at) {
       const createdAt = new Date(row.created_at);
@@ -219,8 +265,12 @@ export default async function AdminPage({
     }
   }
 
-  const sessionCounts: SessionCount[] = [...sessionCountsMap.entries()]
-    .map(([session, sessionCount]) => ({ session, count: sessionCount }))
+  const startClassCounts: ClassCount[] = [...startClassCountsMap.entries()]
+    .map(([className, classCount]) => ({ className, count: classCount }))
+    .sort((a, b) => b.count - a.count);
+
+  const endClassCounts: ClassCount[] = [...endClassCountsMap.entries()]
+    .map(([className, classCount]) => ({ className, count: classCount }))
     .sort((a, b) => b.count - a.count);
 
   const dailyCounts: DailyCount[] = [...dayCountsMap.entries()].map(
@@ -235,11 +285,13 @@ export default async function AdminPage({
     (sum, dayCount) => sum + dayCount.count,
     0,
   );
-  const maxSessionCount = sessionCounts[0]?.count ?? 1;
+  const maxEndClassCount = endClassCounts[0]?.count ?? 1;
   const maxDailyCount = Math.max(
     1,
     ...dailyCounts.map((dayCount) => dayCount.count),
   );
+  const examParticipationTotal =
+    examStats.psc + examStats.jsc + examStats.ssc + examStats.hsc;
 
   const totalRows = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalRows / PAGE_SIZE));
@@ -372,10 +424,30 @@ export default async function AdminPage({
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Sessions Covered
+                    Start Classes Covered
                   </p>
                   <p className="mt-2 text-2xl font-bold text-slate-900">
-                    {sessionCounts.length}
+                    {startClassCounts.length}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Public Exam Shared
+                  </p>
+                  <p className="mt-2 text-2xl font-bold text-slate-900">
+                    {publicExamCount}
+                  </p>
+                  <p className="text-xs text-slate-500">Has exam details</p>
+                </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    End Classes Covered
+                  </p>
+                  <p className="mt-2 text-2xl font-bold text-slate-900">
+                    {endClassCounts.length}
                   </p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
@@ -387,23 +459,32 @@ export default async function AdminPage({
                   </p>
                   <p className="text-xs text-slate-500">Last 7 days</p>
                 </div>
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Exam Entries
+                  </p>
+                  <p className="mt-2 text-2xl font-bold text-slate-900">
+                    {examParticipationTotal}
+                  </p>
+                  <p className="text-xs text-slate-500">PSC + JSC + SSC + HSC</p>
+                </div>
               </div>
 
               <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <div className="rounded-lg border border-slate-200 p-4">
                   <h3 className="text-sm font-semibold text-slate-800">
-                    Count Per Session
+                    Count Per End Class
                   </h3>
                   <div className="mt-4 space-y-3">
-                    {sessionCounts.length === 0 && (
+                    {endClassCounts.length === 0 && (
                       <p className="text-sm text-slate-500">
-                        No session data available.
+                        No class data available.
                       </p>
                     )}
-                    {sessionCounts.slice(0, 8).map((item) => (
-                      <div key={item.session}>
+                    {endClassCounts.slice(0, 8).map((item) => (
+                      <div key={item.className}>
                         <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
-                          <span className="truncate pr-3">{item.session}</span>
+                          <span className="truncate pr-3">{item.className}</span>
                           <span className="font-semibold text-slate-800">
                             {item.count}
                           </span>
@@ -412,7 +493,7 @@ export default async function AdminPage({
                           <div
                             className="h-2 rounded-full bg-slate-700"
                             style={{
-                              width: `${(item.count / maxSessionCount) * 100}%`,
+                              width: `${(item.count / maxEndClassCount) * 100}%`,
                             }}
                           />
                         </div>
@@ -423,31 +504,62 @@ export default async function AdminPage({
 
                 <div className="rounded-lg border border-slate-200 p-4">
                   <h3 className="text-sm font-semibold text-slate-800">
-                    Recent Submissions (7 Days)
+                    Public Exam Breakdown
                   </h3>
-                  <div className="mt-4 flex h-40 items-end gap-2">
-                    {dailyCounts.map((item) => (
-                      <div
-                        key={item.day}
-                        className="flex flex-1 flex-col items-center gap-1"
-                      >
-                        <span className="text-[11px] text-slate-600">
-                          {item.count}
-                        </span>
-                        <div className="flex h-28 w-full items-end rounded-md bg-slate-100 px-1">
-                          <div
-                            className="w-full rounded-sm bg-emerald-500"
-                            style={{
-                              height: `${(item.count / maxDailyCount) * 100}%`,
-                            }}
-                          />
+                  <div className="mt-4 space-y-3">
+                    {[
+                      { key: "PSC", value: examStats.psc, color: "bg-blue-600" },
+                      { key: "JSC", value: examStats.jsc, color: "bg-cyan-600" },
+                      { key: "SSC", value: examStats.ssc, color: "bg-emerald-600" },
+                      { key: "HSC", value: examStats.hsc, color: "bg-amber-600" },
+                    ].map((item) => {
+                      const width =
+                        examParticipationTotal > 0
+                          ? (item.value / examParticipationTotal) * 100
+                          : 0;
+
+                      return (
+                        <div key={item.key}>
+                          <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
+                            <span className="font-medium text-slate-700">{item.key}</span>
+                            <span className="font-semibold text-slate-900">
+                              {item.value}
+                            </span>
+                          </div>
+                          <div className="h-2 rounded-full bg-slate-100">
+                            <div
+                              className={`h-2 rounded-full ${item.color}`}
+                              style={{ width: `${width}%` }}
+                            />
+                          </div>
                         </div>
-                        <span className="text-[11px] text-slate-500">
-                          {getDayLabel(item.day)}
-                        </span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-lg border border-slate-200 p-4">
+                <h3 className="text-sm font-semibold text-slate-800">
+                  Recent Submissions (7 Days)
+                </h3>
+                <div className="mt-4 flex h-40 items-end gap-2">
+                  {dailyCounts.map((item) => (
+                    <div key={item.day} className="flex flex-1 flex-col items-center gap-1">
+                      <span className="text-[11px] text-slate-600">{item.count}</span>
+                      <div className="flex h-28 w-full items-end rounded-md bg-slate-100 px-1">
+                        <div
+                          className="w-full rounded-sm bg-emerald-500"
+                          style={{
+                            height: `${(item.count / maxDailyCount) * 100}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-[11px] text-slate-500">
+                        {getDayLabel(item.day)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </>
