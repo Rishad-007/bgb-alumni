@@ -40,17 +40,19 @@ export function useLandingData() {
     const loadLandingData = async () => {
       const response = await fetch("/api/landing-data", { cache: "no-store" });
 
-      const payload = (await response.json().catch(() => null)) as
-        | {
-            stats?: LandingStats;
-            latestAlumni?: AlumniRow[];
-            error?: string;
-          }
-        | null;
+      const payload = (await response.json().catch(() => null)) as {
+        stats?: LandingStats;
+        latestAlumni?: AlumniRow[];
+        error?: string;
+      } | null;
 
       if (!isMounted) return;
 
-      if (!response.ok || !payload?.stats || !Array.isArray(payload.latestAlumni)) {
+      if (
+        !response.ok ||
+        !payload?.stats ||
+        !Array.isArray(payload.latestAlumni)
+      ) {
         setHasError(true);
         setIsLoading(false);
         return;

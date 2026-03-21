@@ -527,7 +527,7 @@ export default function RegisterPage() {
                 <FloatingInput
                   id="endClass"
                   label="End Class"
-                  placeholder="e.g. SSC / HSC"
+                  placeholder="e.g. Class 10"
                   value={values.endClass}
                   onChange={handleChange("endClass")}
                   required

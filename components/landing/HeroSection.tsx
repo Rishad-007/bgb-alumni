@@ -143,13 +143,36 @@ export function HeroSection() {
                   transition={{ duration: 0.9, delay: 1.35, ease: "easeOut" }}
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.97 }}
+                  className="flex flex-col items-center sm:items-start"
                 >
-                  <Link
-                    href="/register"
-                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-8 py-3.5 text-base font-bold text-slate-950 shadow-[0_0_30px_rgba(14,165,233,0.42)] transition-shadow duration-300 hover:shadow-[0_0_44px_rgba(56,189,248,0.6)]"
-                  >
-                    Join Alumni
-                  </Link>
+                  <div className="relative inline-block rounded-full">
+                    <span className="pointer-events-none absolute -inset-1 -z-10 rounded-full bg-cyan-300/45 blur-xl" />
+                    <motion.span
+                      className="pointer-events-none absolute -inset-1 -z-10 rounded-full border border-cyan-200/70"
+                      animate={{
+                        scale: [1, 1.06, 1],
+                        opacity: [0.9, 0.35, 0.9],
+                      }}
+                      transition={{
+                        duration: 1.8,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    />
+                    <Link
+                      href="/register"
+                      aria-label="Open registration page"
+                      className="inline-flex min-w-[230px] items-center justify-center gap-2 rounded-full border border-cyan-200/70 bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-400 px-7 py-4 text-base font-extrabold tracking-wide text-slate-950 shadow-[0_0_38px_rgba(56,189,248,0.55)] ring-4 ring-cyan-100/30 transition-all duration-300 hover:shadow-[0_0_58px_rgba(56,189,248,0.78)] sm:min-w-[270px] sm:px-10 sm:py-5 sm:text-xl"
+                    >
+                      Join Now - Register
+                      <span aria-hidden="true" className="text-xl leading-none">
+                        {"->"}
+                      </span>
+                    </Link>
+                  </div>
+                  <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-cyan-100 sm:text-sm">
+                    Takes you to the Registration Page
+                  </p>
                 </motion.div>
               </motion.div>
             </div>

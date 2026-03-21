@@ -51,20 +51,20 @@ Required variables:
 Important:
 
 - Do not commit .env, .env.local, or any secret file.
-- Only NEXT_PUBLIC_ variables are safe to expose in browser bundles.
-- SUPABASE_SERVICE_ROLE_KEY must never be prefixed with NEXT_PUBLIC_.
+- Only NEXT*PUBLIC* variables are safe to expose in browser bundles.
+- SUPABASE*SERVICE_ROLE_KEY must never be prefixed with NEXT_PUBLIC*.
 
 ## Local Development
 
 1. Install dependencies:
 
-	npm install
+   npm install
 
 2. Configure .env.local as described above.
 
 3. Run dev server:
 
-	npm run dev
+   npm run dev
 
 4. Open http://localhost:3000
 
@@ -85,10 +85,10 @@ If build passes locally, Vercel deployment should be straightforward.
 2. In Vercel, import your GitHub repository.
 3. Framework preset: Next.js (auto-detected).
 4. Add all environment variables in Vercel Project Settings > Environment Variables:
-	- NEXT_PUBLIC_SUPABASE_URL
-	- NEXT_PUBLIC_SUPABASE_ANON_KEY
-	- SUPABASE_SERVICE_ROLE_KEY
-	- ADMIN_DASHBOARD_PASSWORD
+   - NEXT_PUBLIC_SUPABASE_URL
+   - NEXT_PUBLIC_SUPABASE_ANON_KEY
+   - SUPABASE_SERVICE_ROLE_KEY
+   - ADMIN_DASHBOARD_PASSWORD
 5. Add values for Production (and Preview if you use preview branches).
 6. Deploy.
 
@@ -96,26 +96,26 @@ If build passes locally, Vercel deployment should be straightforward.
 
 1. Install CLI:
 
-	npm i -g vercel
+   npm i -g vercel
 
 2. Login:
 
-	vercel login
+   vercel login
 
 3. Link project (inside repo):
 
-	vercel
+   vercel
 
 4. Add env vars:
 
-	vercel env add NEXT_PUBLIC_SUPABASE_URL production
-	vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
-	vercel env add SUPABASE_SERVICE_ROLE_KEY production
-	vercel env add ADMIN_DASHBOARD_PASSWORD production
+   vercel env add NEXT_PUBLIC_SUPABASE_URL production
+   vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
+   vercel env add SUPABASE_SERVICE_ROLE_KEY production
+   vercel env add ADMIN_DASHBOARD_PASSWORD production
 
 5. Deploy production:
 
-	vercel --prod
+   vercel --prod
 
 ## Supabase Setup Checklist
 
@@ -130,8 +130,8 @@ If .env was committed before, do all of this now:
 
 1. Remove tracked .env from git (already done in this workspace).
 2. Rotate exposed secrets in Supabase:
-	- Regenerate service role key
-	- Regenerate anon key if needed
+   - Regenerate service role key
+   - Regenerate anon key if needed
 3. Update local .env.local with new values.
 4. Update Vercel environment variables with new values.
 5. Redeploy.

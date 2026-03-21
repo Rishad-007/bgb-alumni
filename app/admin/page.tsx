@@ -191,7 +191,7 @@ export default async function AdminPage({
           .select(
             "id, name, email, phone, session, start_class, start_year, end_class, end_year, has_public_exam, psc_year, jsc_year, ssc_year, hsc_year, photo_url, created_at",
             {
-            count: "exact",
+              count: "exact",
             },
           );
 
@@ -466,7 +466,9 @@ export default async function AdminPage({
                   <p className="mt-2 text-2xl font-bold text-slate-900">
                     {examParticipationTotal}
                   </p>
-                  <p className="text-xs text-slate-500">PSC + JSC + SSC + HSC</p>
+                  <p className="text-xs text-slate-500">
+                    PSC + JSC + SSC + HSC
+                  </p>
                 </div>
               </div>
 
@@ -484,7 +486,9 @@ export default async function AdminPage({
                     {endClassCounts.slice(0, 8).map((item) => (
                       <div key={item.className}>
                         <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
-                          <span className="truncate pr-3">{item.className}</span>
+                          <span className="truncate pr-3">
+                            {item.className}
+                          </span>
                           <span className="font-semibold text-slate-800">
                             {item.count}
                           </span>
@@ -508,10 +512,26 @@ export default async function AdminPage({
                   </h3>
                   <div className="mt-4 space-y-3">
                     {[
-                      { key: "PSC", value: examStats.psc, color: "bg-blue-600" },
-                      { key: "JSC", value: examStats.jsc, color: "bg-cyan-600" },
-                      { key: "SSC", value: examStats.ssc, color: "bg-emerald-600" },
-                      { key: "HSC", value: examStats.hsc, color: "bg-amber-600" },
+                      {
+                        key: "PSC",
+                        value: examStats.psc,
+                        color: "bg-blue-600",
+                      },
+                      {
+                        key: "JSC",
+                        value: examStats.jsc,
+                        color: "bg-cyan-600",
+                      },
+                      {
+                        key: "SSC",
+                        value: examStats.ssc,
+                        color: "bg-emerald-600",
+                      },
+                      {
+                        key: "HSC",
+                        value: examStats.hsc,
+                        color: "bg-amber-600",
+                      },
                     ].map((item) => {
                       const width =
                         examParticipationTotal > 0
@@ -521,7 +541,9 @@ export default async function AdminPage({
                       return (
                         <div key={item.key}>
                           <div className="mb-1 flex items-center justify-between text-xs text-slate-600">
-                            <span className="font-medium text-slate-700">{item.key}</span>
+                            <span className="font-medium text-slate-700">
+                              {item.key}
+                            </span>
                             <span className="font-semibold text-slate-900">
                               {item.value}
                             </span>
@@ -545,8 +567,13 @@ export default async function AdminPage({
                 </h3>
                 <div className="mt-4 flex h-40 items-end gap-2">
                   {dailyCounts.map((item) => (
-                    <div key={item.day} className="flex flex-1 flex-col items-center gap-1">
-                      <span className="text-[11px] text-slate-600">{item.count}</span>
+                    <div
+                      key={item.day}
+                      className="flex flex-1 flex-col items-center gap-1"
+                    >
+                      <span className="text-[11px] text-slate-600">
+                        {item.count}
+                      </span>
                       <div className="flex h-28 w-full items-end rounded-md bg-slate-100 px-1">
                         <div
                           className="w-full rounded-sm bg-emerald-500"
