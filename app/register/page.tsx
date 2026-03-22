@@ -52,6 +52,18 @@ const fieldItem = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.45 } },
 };
 
+const generateYearOptions = (): string[] => {
+  const currentYear = new Date().getFullYear();
+  const startYear = 1980;
+  const years: string[] = [];
+
+  for (let year = currentYear; year >= startYear; year--) {
+    years.push(year.toString());
+  }
+
+  return years;
+};
+
 const getImageDimensions = (
   file: File,
 ): Promise<{ width: number; height: number }> =>
@@ -104,7 +116,6 @@ export default function RegisterPage() {
   const progressTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const emailPattern = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/, []);
-  const yearPattern = useMemo(() => /^\d{4}$/, []);
 
   const stopProgressTimer = () => {
     if (progressTimerRef.current) {
@@ -164,15 +175,11 @@ export default function RegisterPage() {
       nextErrors.startClass = "Start class is required.";
     if (!values.startYear.trim()) {
       nextErrors.startYear = "Start year is required.";
-    } else if (!yearPattern.test(values.startYear.trim())) {
-      nextErrors.startYear = "Start year must be 4 digits (e.g. 2015).";
     }
 
     if (!values.endClass.trim()) nextErrors.endClass = "End class is required.";
     if (!values.endYear.trim()) {
       nextErrors.endYear = "End year is required.";
-    } else if (!yearPattern.test(values.endYear.trim())) {
-      nextErrors.endYear = "End year must be 4 digits (e.g. 2020).";
     }
 
     if (!values.publicExamFromSchool) {
@@ -193,32 +200,24 @@ export default function RegisterPage() {
       if (values.pscTaken) {
         if (!values.pscYear.trim()) {
           nextErrors.pscYear = "PSC year is required.";
-        } else if (!yearPattern.test(values.pscYear.trim())) {
-          nextErrors.pscYear = "PSC year must be 4 digits.";
         }
       }
 
       if (values.jscTaken) {
         if (!values.jscYear.trim()) {
           nextErrors.jscYear = "JSC year is required.";
-        } else if (!yearPattern.test(values.jscYear.trim())) {
-          nextErrors.jscYear = "JSC year must be 4 digits.";
         }
       }
 
       if (values.sscTaken) {
         if (!values.sscYear.trim()) {
           nextErrors.sscYear = "SSC year is required.";
-        } else if (!yearPattern.test(values.sscYear.trim())) {
-          nextErrors.sscYear = "SSC year must be 4 digits.";
         }
       }
 
       if (values.hscTaken) {
         if (!values.hscYear.trim()) {
           nextErrors.hscYear = "HSC year is required.";
-        } else if (!yearPattern.test(values.hscYear.trim())) {
-          nextErrors.hscYear = "HSC year must be 4 digits.";
         }
       }
     }
@@ -510,17 +509,27 @@ export default function RegisterPage() {
               </motion.div>
 
               <motion.div variants={fieldItem}>
-                <FloatingInput
-                  id="startYear"
-                  label="Start Year"
-                  placeholder="e.g. 2012"
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Start Year <span className="text-red-500">*</span>
+                </label>
+                <select
                   value={values.startYear}
-                  onChange={handleChange("startYear")}
+                  onChange={(e) => handleChange("startYear")(e.target.value)}
+                  className="w-full h-11 rounded-xl border border-slate-300 px-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 appearance-none bg-white cursor-pointer"
                   required
-                  type="text"
-                  icon={<SessionIcon />}
-                  error={errors.startYear}
-                />
+                >
+                  <option value="">-- Select Start Year --</option>
+                  {generateYearOptions().map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+                {errors.startYear && (
+                  <p className="mt-1 text-xs text-rose-600">
+                    {errors.startYear}
+                  </p>
+                )}
               </motion.div>
 
               <motion.div variants={fieldItem}>
@@ -538,17 +547,25 @@ export default function RegisterPage() {
               </motion.div>
 
               <motion.div variants={fieldItem}>
-                <FloatingInput
-                  id="endYear"
-                  label="End Year"
-                  placeholder="e.g. 2023"
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  End Year <span className="text-red-500">*</span>
+                </label>
+                <select
                   value={values.endYear}
-                  onChange={handleChange("endYear")}
+                  onChange={(e) => handleChange("endYear")(e.target.value)}
+                  className="w-full h-11 rounded-xl border border-slate-300 px-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 appearance-none bg-white cursor-pointer"
                   required
-                  type="text"
-                  icon={<SessionIcon />}
-                  error={errors.endYear}
-                />
+                >
+                  <option value="">-- Select End Year --</option>
+                  {generateYearOptions().map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+                {errors.endYear && (
+                  <p className="mt-1 text-xs text-rose-600">{errors.endYear}</p>
+                )}
               </motion.div>
 
               <motion.div
@@ -838,13 +855,18 @@ function ExamYearRow({
 
       {checked ? (
         <div className="mt-2">
-          <input
-            type="text"
+          <select
             value={yearValue}
             onChange={(event) => onYearChange(event.target.value)}
-            placeholder={`${label} year (e.g. 2018)`}
-            className="h-11 w-full rounded-xl border border-slate-300 px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-          />
+            className="h-11 w-full rounded-xl border border-slate-300 px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 appearance-none bg-white cursor-pointer"
+          >
+            <option value="">-- Select {label} Year --</option>
+            {generateYearOptions().map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
           {error ? <p className="mt-1 text-xs text-rose-600">{error}</p> : null}
         </div>
       ) : null}
