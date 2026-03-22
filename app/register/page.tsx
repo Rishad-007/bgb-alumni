@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import NextImage from "next/image";
 import Link from "next/link";
 import { FormEvent, useMemo, useRef, useState } from "react";
@@ -84,7 +85,7 @@ const getImageDimensions = (
     image.src = imageUrl;
   });
 
-export default function RegisterPage() {
+function RegisterPage() {
   const [values, setValues] = useState<FormValues>({
     name: "",
     email: "",
@@ -420,271 +421,321 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_15%,rgba(14,165,233,0.12),transparent_30%),radial-gradient(circle_at_90%_85%,rgba(6,182,212,0.12),transparent_30%)]" />
+    <main className="relative min-h-screen overflow-hidden bg-[#F8F9FA] [font-family:Inter,Montserrat,ui-sans-serif,system-ui]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(0,33,71,0.15),transparent_35%),radial-gradient(circle_at_100%_100%,rgba(212,175,55,0.12),transparent_35%)]" />
 
-      <div className="relative mx-auto max-w-7xl">
+      <div className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <header className="mb-6 flex items-center justify-between rounded-xl border border-[#002147]/15 bg-white/85 px-4 py-3 shadow-sm backdrop-blur sm:px-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#002147] text-sm font-bold text-white">
+              BG
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#002147]">
+                BGPSCL Alumni
+              </p>
+              <p className="text-sm text-slate-600">Registration Portal</p>
+            </div>
+          </div>
+          <Link
+            href="/"
+            className="rounded-lg border border-[#002147]/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-[#002147] transition hover:border-[#002147] hover:bg-[#002147] hover:text-white"
+          >
+            Back Home
+          </Link>
+        </header>
+
         <motion.div
-          className="grid overflow-hidden rounded-3xl border border-white/60 bg-white/70 shadow-2xl shadow-slate-900/10 backdrop-blur-xl lg:min-h-[80vh] lg:grid-cols-2"
-          initial={{ opacity: 0, y: 26 }}
+          className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]"
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <section className="order-2 p-6 sm:p-8 lg:order-1 lg:p-10">
-            <div className="mb-7 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">
-                  Alumni Registration
-                </p>
-                <h1 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">
-                  Join The BGPSC Alumni Network
-                </h1>
-              </div>
-              <Link
-                href="/"
-                className="rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-blue-500 hover:text-blue-700"
-              >
-                Back Home
-              </Link>
+          <section className="order-2 space-y-6 lg:order-1">
+            <div className="rounded-xl border border-[#002147]/15 bg-white p-5 shadow-[0_8px_30px_rgba(2,12,27,0.08)] sm:p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#002147]">
+                Alumni Registration
+              </p>
+              <h1 className="mt-2 text-2xl font-semibold text-slate-900 sm:text-3xl">
+                Join the BGPSC Alumni Network
+              </h1>
+              <p className="mt-2 text-sm text-slate-600">
+                Fill out your profile details to connect with classmates,
+                teachers, and future opportunities.
+              </p>
             </div>
 
             <motion.form
               onSubmit={handleSubmit}
-              className="space-y-4"
+              className="space-y-5"
               variants={formContainer}
               initial="hidden"
               animate="visible"
             >
-              <motion.div variants={fieldItem}>
-                <FloatingInput
-                  id="name"
-                  label="Name"
-                  value={values.name}
-                  onChange={handleChange("name")}
-                  required
-                  type="text"
-                  icon={<UserIcon />}
-                  error={errors.name}
-                />
-              </motion.div>
-
-              <motion.div variants={fieldItem}>
-                <FloatingInput
-                  id="email"
-                  label="Email"
-                  value={values.email}
-                  onChange={handleChange("email")}
-                  required
-                  type="email"
-                  icon={<EmailIcon />}
-                  error={errors.email}
-                />
-              </motion.div>
-
-              <motion.div variants={fieldItem}>
-                <FloatingInput
-                  id="phone"
-                  label="Phone"
-                  value={values.phone}
-                  onChange={handleChange("phone")}
-                  required
-                  type="tel"
-                  icon={<PhoneIcon />}
-                  error={errors.phone}
-                />
-              </motion.div>
-
-              <motion.div variants={fieldItem}>
-                <FloatingInput
-                  id="startClass"
-                  label="Start Class"
-                  placeholder="e.g. Class 1"
-                  value={values.startClass}
-                  onChange={handleChange("startClass")}
-                  required
-                  type="text"
-                  icon={<SessionIcon />}
-                  error={errors.startClass}
-                />
-              </motion.div>
-
-              <motion.div variants={fieldItem}>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Start Year <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={values.startYear}
-                  onChange={(e) => handleChange("startYear")(e.target.value)}
-                  className="w-full h-11 rounded-xl border border-slate-300 px-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 appearance-none bg-white cursor-pointer"
-                  required
-                >
-                  <option value="">-- Select Start Year --</option>
-                  {generateYearOptions().map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-                {errors.startYear && (
-                  <p className="mt-1 text-xs text-rose-600">
-                    {errors.startYear}
-                  </p>
-                )}
-              </motion.div>
-
-              <motion.div variants={fieldItem}>
-                <FloatingInput
-                  id="endClass"
-                  label="End Class"
-                  placeholder="e.g. Class 10"
-                  value={values.endClass}
-                  onChange={handleChange("endClass")}
-                  required
-                  type="text"
-                  icon={<SessionIcon />}
-                  error={errors.endClass}
-                />
-              </motion.div>
-
-              <motion.div variants={fieldItem}>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  End Year <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={values.endYear}
-                  onChange={(e) => handleChange("endYear")(e.target.value)}
-                  className="w-full h-11 rounded-xl border border-slate-300 px-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 appearance-none bg-white cursor-pointer"
-                  required
-                >
-                  <option value="">-- Select End Year --</option>
-                  {generateYearOptions().map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-                {errors.endYear && (
-                  <p className="mt-1 text-xs text-rose-600">{errors.endYear}</p>
-                )}
-              </motion.div>
-
-              <motion.div
+              <motion.section
                 variants={fieldItem}
-                className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4"
+                className="rounded-xl border border-[#002147]/15 bg-white p-5 shadow-[0_8px_30px_rgba(2,12,27,0.08)] sm:p-6"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-700">
-                  Do you have any public exam from this school? *
-                </p>
-
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handlePublicExamChoice("yes")}
-                    className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition ${
-                      values.publicExamFromSchool === "yes"
-                        ? "border-blue-600 bg-blue-600 text-white"
-                        : "border-slate-300 bg-white text-slate-700 hover:border-blue-400"
-                    }`}
-                  >
-                    Yes
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handlePublicExamChoice("no")}
-                    className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition ${
-                      values.publicExamFromSchool === "no"
-                        ? "border-blue-600 bg-blue-600 text-white"
-                        : "border-slate-300 bg-white text-slate-700 hover:border-blue-400"
-                    }`}
-                  >
-                    No
-                  </button>
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.12em] text-[#002147]">
+                  Personal Information
+                </h2>
+                <div className="space-y-4">
+                  <FloatingInput
+                    id="name"
+                    label="Name"
+                    value={values.name}
+                    onChange={handleChange("name")}
+                    required
+                    type="text"
+                    icon={<UserIcon />}
+                    error={errors.name}
+                  />
+                  <FloatingInput
+                    id="email"
+                    label="Email"
+                    value={values.email}
+                    onChange={handleChange("email")}
+                    required
+                    type="email"
+                    icon={<EmailIcon />}
+                    error={errors.email}
+                  />
+                  <FloatingInput
+                    id="phone"
+                    label="Phone"
+                    value={values.phone}
+                    onChange={handleChange("phone")}
+                    required
+                    type="tel"
+                    icon={<PhoneIcon />}
+                    error={errors.phone}
+                  />
                 </div>
+              </motion.section>
 
-                {errors.publicExamFromSchool ? (
-                  <p className="text-xs text-rose-600">
-                    {errors.publicExamFromSchool}
-                  </p>
-                ) : null}
+              <motion.section
+                variants={fieldItem}
+                className="rounded-xl border border-[#002147]/15 bg-white p-5 shadow-[0_8px_30px_rgba(2,12,27,0.08)] sm:p-6"
+              >
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.12em] text-[#002147]">
+                  Graduation Details
+                </h2>
 
-                {values.publicExamFromSchool === "yes" ? (
-                  <div className="space-y-3">
-                    {errors.publicExams ? (
-                      <p className="text-xs text-rose-600">
-                        {errors.publicExams}
+                <div className="space-y-4">
+                  <FloatingInput
+                    id="startClass"
+                    label="Start Class"
+                    placeholder="e.g. Class 1"
+                    value={values.startClass}
+                    onChange={handleChange("startClass")}
+                    required
+                    type="text"
+                    icon={<SessionIcon />}
+                    error={errors.startClass}
+                  />
+
+                  <div>
+                    <label className="mb-1.5 block pl-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-700">
+                      Start Year *
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={values.startYear}
+                        onChange={(event) =>
+                          handleChange("startYear")(event.target.value)
+                        }
+                        className="h-12 w-full appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-slate-900 outline-none transition hover:border-[#002147]/50 focus:border-[#002147] focus:ring-4 focus:ring-[#002147]/10"
+                        required
+                      >
+                        <option value="">Select Start Year</option>
+                        {generateYearOptions().map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+                        <ChevronDownIcon />
+                      </span>
+                    </div>
+                    {errors.startYear ? (
+                      <p className="mt-1 pl-1 text-xs text-rose-600">
+                        {errors.startYear}
                       </p>
                     ) : null}
-
-                    <div className="space-y-2">
-                      <ExamYearRow
-                        label="PSC"
-                        checked={values.pscTaken}
-                        yearValue={values.pscYear}
-                        onToggle={(checked) => handleExamToggle("psc", checked)}
-                        onYearChange={handleChange("pscYear")}
-                        error={errors.pscYear}
-                      />
-                      <ExamYearRow
-                        label="JSC"
-                        checked={values.jscTaken}
-                        yearValue={values.jscYear}
-                        onToggle={(checked) => handleExamToggle("jsc", checked)}
-                        onYearChange={handleChange("jscYear")}
-                        error={errors.jscYear}
-                      />
-                      <ExamYearRow
-                        label="SSC"
-                        checked={values.sscTaken}
-                        yearValue={values.sscYear}
-                        onToggle={(checked) => handleExamToggle("ssc", checked)}
-                        onYearChange={handleChange("sscYear")}
-                        error={errors.sscYear}
-                      />
-                      <ExamYearRow
-                        label="HSC"
-                        checked={values.hscTaken}
-                        yearValue={values.hscYear}
-                        onToggle={(checked) => handleExamToggle("hsc", checked)}
-                        onYearChange={handleChange("hscYear")}
-                        error={errors.hscYear}
-                      />
-                    </div>
                   </div>
-                ) : null}
-              </motion.div>
+
+                  <FloatingInput
+                    id="endClass"
+                    label="End Class"
+                    placeholder="e.g. Class 10"
+                    value={values.endClass}
+                    onChange={handleChange("endClass")}
+                    required
+                    type="text"
+                    icon={<SessionIcon />}
+                    error={errors.endClass}
+                  />
+
+                  <div>
+                    <label className="mb-1.5 block pl-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-700">
+                      End Year *
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={values.endYear}
+                        onChange={(event) =>
+                          handleChange("endYear")(event.target.value)
+                        }
+                        className="h-12 w-full appearance-none rounded-xl border border-slate-300 bg-white px-4 pr-10 text-slate-900 outline-none transition hover:border-[#002147]/50 focus:border-[#002147] focus:ring-4 focus:ring-[#002147]/10"
+                        required
+                      >
+                        <option value="">Select End Year</option>
+                        {generateYearOptions().map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+                        <ChevronDownIcon />
+                      </span>
+                    </div>
+                    {errors.endYear ? (
+                      <p className="mt-1 pl-1 text-xs text-rose-600">
+                        {errors.endYear}
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-xl border border-[#002147]/15 bg-slate-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#002147]">
+                    Public Exams from This School
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handlePublicExamChoice("yes")}
+                      className={`rounded-lg border px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] transition ${
+                        values.publicExamFromSchool === "yes"
+                          ? "border-[#002147] bg-[#002147] text-white"
+                          : "border-slate-300 bg-white text-slate-700 hover:border-[#002147]/70"
+                      }`}
+                    >
+                      Yes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePublicExamChoice("no")}
+                      className={`rounded-lg border px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] transition ${
+                        values.publicExamFromSchool === "no"
+                          ? "border-[#002147] bg-[#002147] text-white"
+                          : "border-slate-300 bg-white text-slate-700 hover:border-[#002147]/70"
+                      }`}
+                    >
+                      No
+                    </button>
+                  </div>
+
+                  {errors.publicExamFromSchool ? (
+                    <p className="mt-2 text-xs text-rose-600">
+                      {errors.publicExamFromSchool}
+                    </p>
+                  ) : null}
+
+                  {values.publicExamFromSchool === "yes" ? (
+                    <div className="mt-4 space-y-3 border-t border-slate-200 pt-4">
+                      {errors.publicExams ? (
+                        <p className="text-xs text-rose-600">
+                          {errors.publicExams}
+                        </p>
+                      ) : null}
+
+                      <div className="space-y-2">
+                        <ExamYearRow
+                          label="PSC"
+                          checked={values.pscTaken}
+                          yearValue={values.pscYear}
+                          onToggle={(checked) =>
+                            handleExamToggle("psc", checked)
+                          }
+                          onYearChange={handleChange("pscYear")}
+                          error={errors.pscYear}
+                        />
+                        <ExamYearRow
+                          label="JSC"
+                          checked={values.jscTaken}
+                          yearValue={values.jscYear}
+                          onToggle={(checked) =>
+                            handleExamToggle("jsc", checked)
+                          }
+                          onYearChange={handleChange("jscYear")}
+                          error={errors.jscYear}
+                        />
+                        <ExamYearRow
+                          label="SSC"
+                          checked={values.sscTaken}
+                          yearValue={values.sscYear}
+                          onToggle={(checked) =>
+                            handleExamToggle("ssc", checked)
+                          }
+                          onYearChange={handleChange("sscYear")}
+                          error={errors.sscYear}
+                        />
+                        <ExamYearRow
+                          label="HSC"
+                          checked={values.hscTaken}
+                          yearValue={values.hscYear}
+                          onToggle={(checked) =>
+                            handleExamToggle("hsc", checked)
+                          }
+                          onYearChange={handleChange("hscYear")}
+                          error={errors.hscYear}
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </motion.section>
+
+              <motion.section
+                variants={fieldItem}
+                className="rounded-xl border border-[#002147]/15 bg-white p-5 shadow-[0_8px_30px_rgba(2,12,27,0.08)] sm:p-6"
+              >
+                <h2 className="mb-4 text-sm font-semibold uppercase tracking-[0.12em] text-[#002147]">
+                  Career and Photo
+                </h2>
+
+                <div className="space-y-4">
+                  <FloatingInput
+                    id="currentUniversity"
+                    label="Current University / Job"
+                    value={values.currentUniversity}
+                    onChange={handleChange("currentUniversity")}
+                    required
+                    type="text"
+                    icon={<WorkIcon />}
+                    error={errors.currentUniversity}
+                  />
+
+                  <PhotoDropzone
+                    file={photoFile}
+                    onFileSelect={handlePhotoSelect}
+                    error={errors.photo}
+                    uploadProgress={uploadProgress}
+                  />
+                </div>
+              </motion.section>
 
               <motion.div variants={fieldItem}>
-                <FloatingInput
-                  id="currentUniversity"
-                  label="Current University / Job"
-                  value={values.currentUniversity}
-                  onChange={handleChange("currentUniversity")}
-                  required
-                  type="text"
-                  icon={<WorkIcon />}
-                  error={errors.currentUniversity}
-                />
-              </motion.div>
-
-              <motion.div variants={fieldItem} className="pt-1">
-                <PhotoDropzone
-                  file={photoFile}
-                  onFileSelect={handlePhotoSelect}
-                  error={errors.photo}
-                  uploadProgress={uploadProgress}
-                />
-              </motion.div>
-
-              <motion.div variants={fieldItem} className="pt-2">
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex h-12 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-blue-700 to-cyan-600 text-sm font-semibold text-white shadow-xl shadow-blue-700/25 transition disabled:cursor-not-allowed disabled:opacity-60"
-                  whileHover={{
-                    scale: 1.01,
-                    boxShadow: "0 16px 35px rgba(14, 116, 255, 0.35)",
-                  }}
-                  whileTap={{ scale: 0.99 }}
+                  className="flex h-12 w-full items-center justify-center rounded-xl bg-[#002147] text-sm font-semibold uppercase tracking-[0.1em] text-white shadow-lg shadow-[#002147]/25 transition hover:bg-[#001730] disabled:cursor-not-allowed disabled:bg-slate-400"
+                  whileHover={{ scale: isSubmitting ? 1 : 1.01 }}
+                  whileTap={{ scale: isSubmitting ? 1 : 0.99 }}
                 >
                   {isSubmitting ? (
                     <span className="inline-flex items-center gap-2">
@@ -692,67 +743,69 @@ export default function RegisterPage() {
                       Submitting...
                     </span>
                   ) : (
-                    "Submit Registration"
+                    "Register Alumni"
                   )}
                 </motion.button>
               </motion.div>
             </motion.form>
 
-            <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-4 py-3">
-              <p className="inline-flex items-center gap-2 text-xs text-emerald-800 sm:text-sm">
+            <div className="rounded-xl border border-[#D4AF37]/40 bg-[#002147] px-4 py-3 text-sm text-white">
+              <p className="inline-flex items-center gap-2">
                 <TrustIcon />
-                Your data is Safe and only used for alumni connection
+                Your data is secure and used only for alumni communication.
               </p>
             </div>
 
             <AnimatePresence mode="wait">
               {statusType !== "idle" ? (
-                <motion.p
+                <motion.div
                   key={statusType}
-                  className={`mt-4 rounded-xl px-4 py-3 text-sm ${
+                  className={`rounded-xl border px-4 py-3 text-sm ${
                     statusType === "success"
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-rose-50 text-rose-700"
+                      ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                      : "border-rose-300 bg-rose-50 text-rose-700"
                   }`}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                 >
                   {statusMessage}
-                </motion.p>
+                </motion.div>
               ) : null}
             </AnimatePresence>
           </section>
 
-          <section className="relative order-1 min-h-[260px] lg:order-2 lg:min-h-full">
-            <NextImage
-              src="/images/SideviewSchool.jpg"
-              alt="Border Guard Public School and College"
-              fill
-              priority
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent" />
+          <section className="order-1 lg:order-2">
+            <div className="relative min-h-[260px] overflow-hidden rounded-xl border border-[#002147]/20 shadow-[0_12px_36px_rgba(2,12,27,0.2)] lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)]">
+              <NextImage
+                src="/images/SideviewSchool.jpg"
+                alt="Border Guard Public School and College"
+                fill
+                priority
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#001427]/85 via-[#001427]/55 to-[#001427]/25" />
 
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
-              <motion.div
-                className="rounded-2xl border border-white/30 bg-slate-900/45 p-5 text-white backdrop-blur-md"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.7 }}
-                transition={{ duration: 0.6 }}
-              >
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200">
-                  Why Join
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold">
-                  Connect with your batch, mentors, and future opportunities
-                </h2>
-                <p className="mt-2 text-sm text-slate-200">
-                  A trusted digital home for alumni stories, updates, and
-                  meaningful connections.
-                </p>
-              </motion.div>
+              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+                <motion.div
+                  className="rounded-xl border border-white/20 bg-[#002147]/55 p-5 text-white backdrop-blur-sm"
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.6 }}
+                  transition={{ duration: 0.55 }}
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#D4AF37]">
+                    Why Join
+                  </p>
+                  <h2 className="mt-2 text-xl font-semibold sm:text-2xl">
+                    Build your alumni identity with one trusted profile
+                  </h2>
+                  <p className="mt-2 text-sm text-slate-200">
+                    Stay connected with your batch, school updates, mentorship
+                    opportunities, and the larger BGPSC community.
+                  </p>
+                </motion.div>
+              </div>
             </div>
           </section>
         </motion.div>
@@ -760,6 +813,10 @@ export default function RegisterPage() {
     </main>
   );
 }
+
+export default dynamic(() => Promise.resolve(RegisterPage), {
+  ssr: false,
+});
 
 function UserIcon() {
   return (
@@ -824,6 +881,24 @@ function SessionIcon() {
   );
 }
 
+function ChevronDownIcon() {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      width="18"
+      height="18"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
 type ExamYearRowProps = {
   label: string;
   checked: boolean;
@@ -848,25 +923,30 @@ function ExamYearRow({
           type="checkbox"
           checked={checked}
           onChange={(event) => onToggle(event.target.checked)}
-          className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+          className="h-4 w-4 rounded border-slate-300 text-[#002147] focus:ring-[#002147]/30"
         />
         {label}
       </label>
 
       {checked ? (
         <div className="mt-2">
-          <select
-            value={yearValue}
-            onChange={(event) => onYearChange(event.target.value)}
-            className="h-11 w-full rounded-xl border border-slate-300 px-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 appearance-none bg-white cursor-pointer"
-          >
-            <option value="">-- Select {label} Year --</option>
-            {generateYearOptions().map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              value={yearValue}
+              onChange={(event) => onYearChange(event.target.value)}
+              className="h-11 w-full appearance-none rounded-xl border border-slate-300 bg-white px-3 pr-10 text-sm text-slate-900 outline-none transition hover:border-[#002147]/50 focus:border-[#002147] focus:ring-4 focus:ring-[#002147]/10"
+            >
+              <option value="">Select {label} Year</option>
+              {generateYearOptions().map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+              <ChevronDownIcon />
+            </span>
+          </div>
           {error ? <p className="mt-1 text-xs text-rose-600">{error}</p> : null}
         </div>
       ) : null}

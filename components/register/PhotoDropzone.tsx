@@ -43,10 +43,10 @@ export function PhotoDropzone({
     <div className="space-y-2">
       <motion.label
         htmlFor="photo-upload"
-        className={`relative block cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed bg-white/70 p-5 text-center transition ${
+        className={`relative block cursor-pointer overflow-hidden rounded-xl border-2 border-dashed bg-slate-50 p-5 text-center transition ${
           isDragging
-            ? "border-cyan-500 bg-cyan-50"
-            : "border-slate-300 hover:border-blue-400"
+            ? "border-[#D4AF37] bg-[#D4AF37]/10"
+            : "border-slate-300 hover:border-[#002147]/60"
         }`}
         onDragOver={(event) => {
           event.preventDefault();
@@ -79,7 +79,7 @@ export function PhotoDropzone({
         />
 
         <div className="space-y-2">
-          <p className="text-sm font-semibold text-slate-700">
+          <p className="text-sm font-semibold text-slate-800">
             Drag and drop your photo here
           </p>
           <p className="text-xs text-slate-500">
@@ -92,7 +92,7 @@ export function PhotoDropzone({
         {previewUrl ? (
           <motion.div
             key="preview"
-            className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50"
+            className="overflow-hidden rounded-xl border border-slate-200 bg-white"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -124,7 +124,7 @@ export function PhotoDropzone({
           >
             <div className="h-2 overflow-hidden rounded-full bg-slate-200">
               <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500"
+                className="h-full rounded-full bg-gradient-to-r from-[#002147] to-[#D4AF37]"
                 initial={{ width: 0 }}
                 animate={{ width: `${uploadProgress}%` }}
               />
@@ -138,7 +138,7 @@ export function PhotoDropzone({
 
       {error ? (
         <motion.p
-          className="pl-1 text-xs text-rose-600"
+          className="pl-1 text-xs text-rose-300"
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
         >
