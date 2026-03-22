@@ -18,6 +18,7 @@ export function HeroSection() {
     "School",
     "and",
     "College",
+    "Lalmonirhat",
   ];
 
   return (
